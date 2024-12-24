@@ -1,4 +1,3 @@
-import React from "react";
 import { GoClock, GoTag } from "react-icons/go";
 
 export default function NoteContent() {

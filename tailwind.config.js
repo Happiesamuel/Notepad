@@ -17,6 +17,7 @@ export default {
         "current-3": "var(--current-3)",
         active: "var(--active)",
         "shadow-input": "var(--shadow-input)",
+        "input-create": "var(--input-create)",
 
         primary: {
           DEFAULT: "hsl(var(--primary))",

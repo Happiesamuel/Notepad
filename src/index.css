@@ -100,6 +100,7 @@ button:focus-visible {
     --active: #eff6ff;
     --shadow-input: #d4d4d8;
     --border-divide: #d4d4d8;
+    --input-create: #d4d4d8;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
@@ -115,6 +116,7 @@ button:focus-visible {
     --active: #3f3f46;
     --shadow-input: #09090b;
     --border-divide: #27272a;
+    --input-create: #52525b;
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;

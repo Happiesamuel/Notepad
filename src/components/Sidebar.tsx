@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useFilterTag } from "@/context/FilterTagContext";
 import { FaCanadianMapleLeaf } from "react-icons/fa6";
 import { GoTag } from "react-icons/go";
 import { IoArchiveOutline } from "react-icons/io5";
@@ -18,49 +18,9 @@ export default function Sidebar() {
       svg: <IoArchiveOutline />,
     },
   ];
-  const tags = [
-    {
-      title: "Cooking",
-      id: 1,
-    },
-    {
-      title: "Dev",
-      id: 2,
-    },
-    {
-      title: "Fitness",
-      id: 3,
-    },
-    {
-      title: "Health",
-      id: 4,
-    },
-    {
-      title: "Personal",
-      id: 5,
-    },
-    {
-      title: "React",
-      id: 6,
-    },
-    {
-      title: "Recipes",
-      id: 7,
-    },
-    {
-      title: "Shopping",
-      id: 8,
-    },
-    {
-      title: "Travel",
-      id: 9,
-    },
-    {
-      title: "TypeScript",
-      id: 10,
-    },
-  ];
-  const [active, setActive] = useState(1);
+
+  const { setTagDetail, active, setActive, tags } = useFilterTag();
+
   return (
     <div className="px-3 min-h-screen border-r border-divide pt-6">
       <div className="flex items-center gap-2 ">
@@ -96,11 +56,12 @@ export default function Sidebar() {
 
       <div className="mx-2 mt-2">
         <h1 className="text-current-3 text-base">Tags</h1>
-        <div className="flex flex-col gap-3 mt-4 text-zinc-800">
+        <div className="flex flex-col gap-1  text-zinc-800 max-h-[60vh] overflow-scroll no-scrollbar">
           {tags.map((tag) => (
             <div
               key={tag.id}
-              className="text-current-2 flex items-center gap-2"
+              className="text-current-2 flex items-center gap-2 cursor-pointer hover:bg-active py-2 rounded-md px-3"
+              onClick={() => setTagDetail(tag.title)}
             >
               <GoTag className="text-lg" />
               <p className="text-base ">{tag.title}</p>
