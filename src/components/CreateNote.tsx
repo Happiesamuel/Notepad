@@ -22,7 +22,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { useFilterTag } from "@/context/FilterTagContext";
 
 export function CreateNote({ children }: { children: ReactElement }) {
-  const { setNotes, tags } = useFilterTag();
+  const { setNotes, tags, notes } = useFilterTag();
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
   const [val, setVal] = useState("");
   function handleSubmit() {
@@ -33,8 +33,9 @@ export function CreateNote({ children }: { children: ReactElement }) {
         {
           title: val,
           tags: selectedTag,
-          id: Math.random() * 50,
+          id: notes.length + 1,
           date: "29 Oct 2024",
+          description: [],
           archive: false,
         },
       ]);

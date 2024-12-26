@@ -1,9 +1,11 @@
 import { Button } from "./ui/button";
 import { useFilterTag } from "@/context/FilterTagContext";
 import { CreateNote } from "./CreateNote";
+import { useNotes } from "@/context/NoteComtext";
 
 export default function NoteList() {
   const { tag, active, notes } = useFilterTag();
+  const { setDisplayId, setStartNote } = useNotes();
 
   let displayNote = notes;
   if (tag && tag !== "All Tags")
@@ -13,6 +15,10 @@ export default function NoteList() {
     displayNote = displayNote.filter((note) => note.archive === false);
   if (active === 2)
     displayNote = displayNote.filter((note) => note.archive === true);
+  function handleGetDisplayNote(id: number) {
+    setDisplayId(id);
+    setStartNote(false);
+  }
   return (
     <div className="pt-3 px-4 border-r border-divide">
       <CreateNote>
@@ -23,7 +29,11 @@ export default function NoteList() {
 
       <div className="my-4 space-y-3 overflow-scroll no-scrollbar max-h-[80vh]">
         {displayNote.map((note) => (
-          <div className="flex flex-col gap-2 cursor-pointer" key={note.id}>
+          <div
+            className="flex flex-col gap-2 cursor-pointer"
+            onClick={() => handleGetDisplayNote(note.id)}
+            key={note.id}
+          >
             <h1 className="text-lg text-current-1 leading-none">
               {note.title}
             </h1>

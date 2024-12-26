@@ -6,43 +6,28 @@ import {
   useContext,
   useState,
 } from "react";
+type Note = {
+  title: string;
+  tags: string[];
+  date: string;
+  description: string[];
+  id: number;
+  archive: boolean;
+};
+type Tag = {
+  title: string;
+  id: number;
+};
 interface Value {
   setTagDetail(val: string): void;
   tag: string;
-  tags: {
-    title: string;
-    id: number;
-  }[];
+  tags: Tag[];
   active: number;
-  notes: {
-    title: string;
-    tags: string[];
-    date: string;
-    id: number;
-    archive: boolean;
-  }[];
-  setNotes: Dispatch<
-    SetStateAction<
-      {
-        title: string;
-        tags: string[];
-        date: string;
-        id: number;
-        archive: boolean;
-      }[]
-    >
-  >;
-  setTags: Dispatch<
-    SetStateAction<
-      {
-        title: string;
-        id: number;
-      }[]
-    >
-  >;
+  notes: Note[];
+  setNotes: Dispatch<SetStateAction<Note[]>>;
+  setTags: Dispatch<SetStateAction<Tag[]>>;
   setActive: Dispatch<SetStateAction<number>>;
 }
-// import { useLocalStorage } from "../features/hooks/useLocalstorage";
 const filterTag = createContext<Value>({
   tag: "",
   setTagDetail: () => "",
@@ -103,71 +88,7 @@ function FilterTagContext({ children }: { children: ReactElement }) {
       id: 10,
     },
   ]);
-  const [notes, setNotes] = useState([
-    {
-      title: "React Performance Optimization",
-      tags: ["Dev", "React"],
-      date: "29 Oct 2024",
-      id: 1,
-      archive: false,
-    },
-    {
-      title: "Japan Travel Planning",
-      tags: ["Travel", "Personal"],
-      date: "28 Oct 2024",
-      id: 2,
-      archive: false,
-    },
-    {
-      title: "Favourite Pasta Recipes",
-      tags: ["Cooking", "Recipes"],
-      date: "27 Oct 2024",
-      id: 3,
-      archive: false,
-    },
-    {
-      title: "Weekly Workout Plan",
-      tags: ["Dev", "React"],
-      date: "26 Oct 2024",
-      id: 4,
-      archive: false,
-    },
-    {
-      title: "Meal Prep Ideas",
-      tags: ["Cooking", "Health", "Recipes"],
-      date: "25 Oct 2024",
-      id: 5,
-      archive: false,
-    },
-    {
-      title: "Reading List",
-      tags: ["Personal", "Dev"],
-      date: "24 Oct 2024",
-      id: 6,
-      archive: false,
-    },
-    {
-      title: "Fitness Goals 2025",
-      tags: ["Fitness", "Health", "Personal"],
-      date: "23 Oct 2024",
-      id: 7,
-      archive: false,
-    },
-    {
-      title: "Learning",
-      tags: ["TypeScript", "React", "Personal"],
-      date: "24 Oct 2024",
-      id: 8,
-      archive: true,
-    },
-    {
-      title: "Marketing",
-      tags: ["Recipes", "Shopping", "Personal"],
-      date: "25 Oct 2024",
-      id: 9,
-      archive: true,
-    },
-  ]);
+  const [notes, setNotes] = useState<Note[]>([]);
 
   function setTagDetail(val: string) {
     setTag(val);
@@ -197,3 +118,76 @@ function useFilterTag() {
 }
 
 export { FilterTagContext, useFilterTag };
+
+// {
+//   title: "React Performance Optimization",
+//   tags: ["Dev", "React"],
+//   date: "29 Oct 2024",
+//   id: 1,
+//   description: [],
+//   archive: false,
+// },
+// {
+//   title: "Japan Travel Planning",
+//   tags: ["Travel", "Personal"],
+//   date: "28 Oct 2024",
+//   description: [],
+//   id: 2,
+//   archive: false,
+// },
+// {
+//   title: "Favourite Pasta Recipes",
+//   tags: ["Cooking", "Recipes"],
+//   date: "27 Oct 2024",
+//   description: [],
+//   id: 3,
+//   archive: false,
+// },
+// {
+//   title: "Weekly Workout Plan",
+//   tags: ["Dev", "React"],
+//   date: "26 Oct 2024",
+//   description: [],
+//   id: 4,
+//   archive: false,
+// },
+// {
+//   title: "Meal Prep Ideas",
+//   tags: ["Cooking", "Health", "Recipes"],
+//   date: "25 Oct 2024",
+//   description: [],
+//   id: 5,
+//   archive: false,
+// },
+// {
+//   title: "Reading List",
+//   tags: ["Personal", "Dev"],
+//   date: "24 Oct 2024",
+//   description: [],
+//   id: 6,
+//   archive: false,
+// },
+// {
+//   title: "Fitness Goals 2025",
+//   tags: ["Fitness", "Health", "Personal"],
+//   date: "23 Oct 2024",
+//   id: 7,
+//   description: [],
+//   archive: false,
+// },
+// {
+//   title: "Learning",
+//   tags: ["TypeScript", "React", "Personal"],
+//   date: "24 Oct 2024",
+//   id: 8,
+//   description: [],
+//   archive: true,
+// },
+// {
+//   title: "Marketing",
+//   tags: ["Recipes", "Shopping", "Personal"],
+//   date: "25 Oct 2024",
+//   id: 9,
+//   description: [],
+//   archive: true,
+// },
