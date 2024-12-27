@@ -1,10 +1,12 @@
 import { useFilterTag } from "@/context/FilterTagContext";
 import { GoClock, GoTag } from "react-icons/go";
-import { Button } from "./ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { IoArchiveOutline } from "react-icons/io5";
+import { FaRegTrashCan } from "react-icons/fa6";
 
-export default function NoteContent() {
+export default function ShowNoteScreen() {
   const { notes, displayId, startNote, dispatch } = useFilterTag();
   const findNote = notes.find((note) => note.id === displayId);
   const [val, setVal] = useState<string>(
@@ -35,14 +37,63 @@ export default function NoteContent() {
       )}px`;
     }
   };
+
+  function handleArchiveNote(): void {
+    const sure = confirm(
+      `Are you sure you want to ${
+        findNote?.archive ? "unarchive" : "archive"
+      } this note?`
+    );
+    if (sure && findNote?.archive === false)
+      return dispatch({ type: "archiveNote" });
+    if (sure && findNote?.archive === true)
+      return dispatch({ type: "unArchiveNote" });
+  }
+  function handleDeleteNote(): void {
+    const sure = confirm(`Are you sure you want to delete this note?`);
+    if (sure) return dispatch({ type: "deleteNote" });
+  }
+
   function handleSubmit() {
     if (!val) return;
     const newVal: string[] = val.split("\n");
     dispatch({ type: "createNote", payload: [...newVal] });
   }
+
   if (!findNote) return;
   return (
-    <div className="pt-3 px-4 relative">
+    <div className="pt-3 px-4 ">
+      <div className="flex items-center justify-between gap-3 border-b border-divide py-3 mb-2">
+        <div
+          onClick={() => dispatch({ type: "backShow" })}
+          className="flex items-center gap-1 text-current-2 cursor-pointer"
+        >
+          <MdOutlineKeyboardArrowLeft />
+          <p>Go Back</p>
+        </div>
+        <div className="flex gap-5 items-center text-base text-current-2 cursor-pointer">
+          <FaRegTrashCan onClick={() => handleDeleteNote()} />{" "}
+          <IoArchiveOutline
+            className={`${findNote.archive && "text-blue-600"}`}
+            onClick={() => handleArchiveNote()}
+          />{" "}
+          <p onClick={() => dispatch({ type: "startFalse" })}>Cancel</p>{" "}
+          {!startNote && (
+            <p
+              className="text-blue-600"
+              onClick={() => dispatch({ type: "startTrue" })}
+            >
+              {findNote?.description.length ? "Edit note" : "Start note"}
+            </p>
+          )}
+          {startNote && (
+            <p className="text-blue-600" onClick={() => handleSubmit()}>
+              Save Note
+            </p>
+          )}
+        </div>
+      </div>
+
       <h1 className="font-semibold text-2xl text-current-1">
         {findNote?.title}
       </h1>
@@ -80,33 +131,6 @@ export default function NoteContent() {
           style={{ lineHeight: `${lineHeight}px` }}
         />
       )}
-
-      <div className="flex items-center gap-2 mt-4 absolute bottom-[2%] border-t w-[94%] pt-3 border-divide">
-        {!startNote && (
-          <Button
-            onClick={() => dispatch({ type: "startTrue" })}
-            className="hover:bg-blue-600 bg-blue-700 text-zinc-100"
-          >
-            {findNote?.description.length ? "Edit note" : "Start note"}
-          </Button>
-        )}
-        {startNote && (
-          <Button
-            onClick={() => handleSubmit()}
-            className="hover:bg-blue-600 bg-blue-700 text-zinc-100"
-          >
-            Submit note
-          </Button>
-        )}
-        {startNote && (
-          <Button
-            onClick={() => dispatch({ type: "startFalse" })}
-            className="hover:bg-active bg-active text-current-2"
-          >
-            Cancel
-          </Button>
-        )}
-      </div>
     </div>
   );
 }

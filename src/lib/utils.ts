@@ -63,3 +63,37 @@ export const tagList = [
     id: 10,
   },
 ];
+
+export const parseDate = (dateString: string): Date => {
+  return new Date(
+    dateString.replace(
+      /(\d{2}) (\w{3}) (\d{4}), (\d{1,2}:\d{2}) (am|pm)/i,
+      (_, day, month, year, time, period) => {
+        const months: { [key: string]: number } = {
+          Jan: 0,
+          Feb: 1,
+          Mar: 2,
+          Apr: 3,
+          May: 4,
+          Jun: 5,
+          Jul: 6,
+          Aug: 7,
+          Sep: 8,
+          Oct: 9,
+          Nov: 10,
+          Dec: 11,
+        };
+        const [hours, minutes] = time.split(":").map(Number);
+        const adjustedHours =
+          period.toLowerCase() === "pm" && hours !== 12
+            ? hours + 12
+            : period.toLowerCase() === "am" && hours === 12
+            ? 0
+            : hours;
+        return `${year}-${months[month]}-${day}T${String(
+          adjustedHours
+        ).padStart(2, "0")}:${minutes}`;
+      }
+    )
+  );
+};

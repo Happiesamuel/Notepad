@@ -17,12 +17,21 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ReactElement, useState } from "react";
+import { Dispatch, ReactElement, SetStateAction, useState } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useFilterTag } from "@/context/FilterTagContext";
 import { date } from "@/lib/utils";
+import { X } from "lucide-react";
 
-export function CreateNote({ children }: { children: ReactElement }) {
+export function CreateNote({
+  children,
+  isOpen,
+  setIsOpen,
+}: {
+  children: ReactElement;
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+}) {
   const { tags, notes, dispatch } = useFilterTag();
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
   const [val, setVal] = useState("");
@@ -40,11 +49,20 @@ export function CreateNote({ children }: { children: ReactElement }) {
           archive: false,
         },
       });
+    setSelectedTag([]);
+    setIsOpen(false);
   }
   return (
-    <Dialog>
+    <Dialog open={isOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px] border-none">
+        <div
+          onClick={() => setIsOpen(false)}
+          className="text-current-1 cursor-pointer absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </div>
         <DialogHeader>
           <DialogTitle className="text-current-1">Create New Note</DialogTitle>
           <DialogDescription className="text-current-3">

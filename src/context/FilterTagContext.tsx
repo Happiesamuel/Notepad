@@ -25,16 +25,20 @@ type State = {
   tags: Tag[];
   notes: Note[];
   displayId: number | null;
+  displayMobile: number;
   startNote: boolean;
   search: string;
+  status: string;
 };
 interface Value {
   tag: string;
   tags: Tag[];
   active: number;
   displayId: number | null;
+  displayMobile: number;
   startNote: boolean;
   notes: Note[];
+  status: string;
   search: string;
   dispatch: Dispatch<{
     type: string;
@@ -42,13 +46,15 @@ interface Value {
   }>;
 }
 const filterTag = createContext<Value>({
-  tag: "",
+  tag: "All Tags",
   tags: [],
   active: 1,
   notes: [],
   displayId: null,
   startNote: false,
   search: "",
+  displayMobile: 1,
+  status: "home",
   dispatch: () => {},
 });
 
@@ -61,11 +67,27 @@ function reducer(
       return { ...state, search: action.payload as string };
     case "getActive":
       return { ...state, active: action.payload as number };
+    case "backShow":
+      return { ...state, status: "home", displayMobile: 1 };
     case "getDisplayNote":
       return {
         ...state,
         displayId: action.payload as number,
         startNote: false,
+        status: "show",
+      };
+    case "getMobileScreen":
+      return {
+        ...state,
+        displayMobile: action.payload as number,
+        status:
+          action.payload === 1
+            ? "home"
+            : action.payload === 2
+            ? "search"
+            : action.payload === 3
+            ? "archive"
+            : "tags",
       };
     case "newTag":
       return {
@@ -102,11 +124,19 @@ function reducer(
             : { ...note, archive: note.archive };
         }),
       };
+    case "unArchiveAll":
+      return {
+        ...state,
+        notes: state.notes.map((note) => {
+          return { ...note, archive: false };
+        }),
+      };
 
     case "deleteNote":
       return {
         ...state,
         startNote: false,
+        status: "home",
         notes: state.notes.filter((note) => note.id !== state.displayId),
       };
     case "createNote":
@@ -122,6 +152,8 @@ function reducer(
     case "createNoteObj":
       return {
         ...state,
+        status: "show",
+        // displayId: state.notes.length * 2,
         notes: [...state.notes, action.payload as Note],
       };
     default:
@@ -135,17 +167,31 @@ function FilterTagContext({ children }: { children: ReactElement }) {
   const storedTags = localStorage.getItem("tags");
   const initialTags = storedTags ? JSON.parse(storedTags) : tagList;
   const initialState = {
-    tag: "",
+    tag: "All Tags",
     active: 1,
     displayId: null,
+    displayMobile: 1,
+    status: "home",
     startNote: false,
     search: "",
     tags: initialTags,
     notes: initialNotes,
   };
 
-  const [{ notes, tag, tags, active, displayId, startNote, search }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    {
+      notes,
+      tag,
+      tags,
+      active,
+      displayId,
+      startNote,
+      search,
+      status,
+      displayMobile,
+    },
+    dispatch,
+  ] = useReducer(reducer, initialState);
   useEffect(() => {
     localStorage.setItem("notes", JSON.stringify(notes));
   }, [notes, "notes"]);
@@ -156,7 +202,9 @@ function FilterTagContext({ children }: { children: ReactElement }) {
   return (
     <filterTag.Provider
       value={{
+        displayMobile,
         search,
+        status,
         tag,
         active,
         notes,

@@ -16,7 +16,6 @@ export default function Header() {
         <div className="flex items-center rounded-lg shadow shadow-shadow-input px-3  text-current-2">
           <FaMagnifyingGlass />
           <Input
-            type="email"
             value={search}
             onChange={(e) =>
               dispatch({ type: "search", payload: e.target.value })

@@ -20,7 +20,7 @@ export default function Sidebar() {
     },
   ];
 
-  const { active, tags, dispatch } = useFilterTag();
+  const { active, tags, dispatch, tag: tagL } = useFilterTag();
 
   return (
     <div className="px-3 min-h-screen border-r border-divide pt-6">
@@ -64,7 +64,9 @@ export default function Sidebar() {
           {tags.map((tag) => (
             <div
               key={tag.id}
-              className="text-current-2 flex items-center gap-2 cursor-pointer hover:bg-active py-2 rounded-md px-3"
+              className={`text-current-2 flex items-center gap-2 cursor-pointer hover:bg-active py-2 rounded-md px-3 ${
+                tag.title === tagL && "bg-active"
+              }`}
               onClick={() =>
                 dispatch({ type: "tagDetails", payload: tag.title })
               }
