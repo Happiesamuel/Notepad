@@ -4,6 +4,7 @@ import { GoTag } from "react-icons/go";
 import { IoArchiveOutline } from "react-icons/io5";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { RiHome3Line } from "react-icons/ri";
+import AddTag from "./AddTag";
 
 export default function Sidebar() {
   const links = [
@@ -19,7 +20,7 @@ export default function Sidebar() {
     },
   ];
 
-  const { setTagDetail, active, setActive, tags } = useFilterTag();
+  const { active, tags, dispatch } = useFilterTag();
 
   return (
     <div className="px-3 min-h-screen border-r border-divide pt-6">
@@ -33,7 +34,7 @@ export default function Sidebar() {
       <div className="flex flex-col text-current-1 gap-2 mt-8 border-b border-divide pb-3">
         {links.map((link) => (
           <div
-            onClick={() => setActive(link.id)}
+            onClick={() => dispatch({ type: "getActive", payload: link.id })}
             key={link.id}
             className={`flex justify-between  items-center cursor-pointer px-3 py-2 ${
               link.id === active && "bg-active  rounded-lg"
@@ -55,13 +56,18 @@ export default function Sidebar() {
       </div>
 
       <div className="mx-2 mt-2">
-        <h1 className="text-current-3 text-base">Tags</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-current-3 text-base">Tags</h1>
+          <AddTag />
+        </div>
         <div className="flex flex-col gap-1  text-zinc-800 max-h-[60vh] overflow-scroll no-scrollbar">
           {tags.map((tag) => (
             <div
               key={tag.id}
               className="text-current-2 flex items-center gap-2 cursor-pointer hover:bg-active py-2 rounded-md px-3"
-              onClick={() => setTagDetail(tag.title)}
+              onClick={() =>
+                dispatch({ type: "tagDetails", payload: tag.title })
+              }
             >
               <GoTag className="text-lg" />
               <p className="text-base ">{tag.title}</p>

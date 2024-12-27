@@ -1,25 +1,18 @@
-import {
-  createContext,
-  ReactElement,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { useSwitchStorage } from "@/hooks/useSwitchStorage";
+import { createContext, ReactElement, useContext, useEffect } from "react";
 interface Value {
   setDarkmode(): void;
   isDarkmode: boolean;
 }
-// import { useLocalStorage } from "../features/hooks/useLocalstorage";
 const Darkmode = createContext<Value>({
-  isDarkmode: false,
+  isDarkmode: window.matchMedia("(prefers-color-scheme: dark)").matches,
   setDarkmode: () => null,
 });
 function DarkmodeContext({ children }: { children: ReactElement }) {
-  const [isDarkmode, setIsDarkmode] = useState(false);
-  //   useLocalStorage(
-  //     window.matchMedia("(prefers-color-scheme: dark)").matches,
-  //     "darkmode"
-  //   );
+  const [isDarkmode, setIsDarkmode] = useSwitchStorage<boolean>(
+    window.matchMedia("(prefers-color-scheme: dark)").matches,
+    "darkmode"
+  );
   function setDarkmode() {
     setIsDarkmode(!isDarkmode);
   }

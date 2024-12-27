@@ -1,13 +1,11 @@
 import { useFilterTag } from "@/context/FilterTagContext";
-import { useNotes } from "@/context/NoteComtext";
 import { GoClock, GoTag } from "react-icons/go";
 import { Button } from "./ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
 
 export default function NoteContent() {
-  const { notes, setNotes } = useFilterTag();
-  const { displayId, startNote, setStartNote } = useNotes();
+  const { notes, displayId, startNote, dispatch } = useFilterTag();
   const findNote = notes.find((note) => note.id === displayId);
   const [val, setVal] = useState<string>(
     findNote?.description.length ? findNote?.description.join("\n") : ""
@@ -21,7 +19,7 @@ export default function NoteContent() {
     },
     [findNote?.description.length, findNote?.description]
   );
-  const maxRows = 6;
+  const maxRows = 17;
   const lineHeight = 24;
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -40,15 +38,7 @@ export default function NoteContent() {
   function handleSubmit() {
     if (!val) return;
     const newVal: string[] = val.split("\n");
-    setNotes(
-      notes.map((note) => {
-        return note.id === displayId
-          ? { ...note, description: [...newVal] }
-          : { ...note, description: [...note.description] };
-      })
-    );
-
-    setStartNote(false);
+    dispatch({ type: "createNote", payload: [...newVal] });
   }
   if (!findNote) return;
   return (
@@ -69,14 +59,14 @@ export default function NoteContent() {
             <GoClock className="text-lg" />
             <p className="text-base">Last edited</p>
           </div>
-          <p>29 Oct 2024</p>
+          <p>{findNote?.date}</p>
         </div>
       </div>
 
       {!startNote && (
-        <div className="mt-3 text-current-2 text-sm">
+        <div className="mt-3 text-current-2 text-sm overflow-scroll no-scrollbar h-[60vh]">
           {findNote?.description.map((note) => (
-            <p id={note}>{note}</p>
+            <p key={note}>{note}</p>
           ))}
         </div>
       )}
@@ -94,10 +84,10 @@ export default function NoteContent() {
       <div className="flex items-center gap-2 mt-4">
         {!startNote && (
           <Button
-            onClick={() => setStartNote(true)}
+            onClick={() => dispatch({ type: "startTrue" })}
             className="hover:bg-blue-600 bg-blue-700 text-zinc-100"
           >
-            Start note
+            {findNote?.description.length ? "Edit note" : "Start note"}
           </Button>
         )}
         {startNote && (
@@ -110,7 +100,7 @@ export default function NoteContent() {
         )}
         {startNote && (
           <Button
-            onClick={() => setStartNote(false)}
+            onClick={() => dispatch({ type: "startFalse" })}
             className="hover:bg-active bg-active text-current-2"
           >
             Cancel

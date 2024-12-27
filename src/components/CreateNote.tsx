@@ -20,25 +20,26 @@ import { Label } from "@/components/ui/label";
 import { ReactElement, useState } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useFilterTag } from "@/context/FilterTagContext";
+import { date } from "@/lib/utils";
 
 export function CreateNote({ children }: { children: ReactElement }) {
-  const { setNotes, tags, notes } = useFilterTag();
+  const { tags, notes, dispatch } = useFilterTag();
   const [selectedTag, setSelectedTag] = useState<string[]>([]);
   const [val, setVal] = useState("");
   function handleSubmit() {
     if (!val || !selectedTag.length) return;
     else
-      setNotes((i) => [
-        ...i,
-        {
+      dispatch({
+        type: "createNoteObj",
+        payload: {
           title: val,
           tags: selectedTag,
           id: notes.length + 1,
-          date: "29 Oct 2024",
+          date: date(),
           description: [],
           archive: false,
         },
-      ]);
+      });
   }
   return (
     <Dialog>

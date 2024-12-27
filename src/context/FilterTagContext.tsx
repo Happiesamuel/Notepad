@@ -1,10 +1,11 @@
+import { date, tagList } from "@/lib/utils";
 import {
   createContext,
   Dispatch,
   ReactElement,
-  SetStateAction,
   useContext,
-  useState,
+  useEffect,
+  useReducer,
 } from "react";
 type Note = {
   title: string;
@@ -18,93 +19,151 @@ type Tag = {
   title: string;
   id: number;
 };
+type State = {
+  tag: string;
+  active: number;
+  tags: Tag[];
+  notes: Note[];
+  displayId: number | null;
+  startNote: boolean;
+  search: string;
+};
 interface Value {
-  setTagDetail(val: string): void;
   tag: string;
   tags: Tag[];
   active: number;
+  displayId: number | null;
+  startNote: boolean;
   notes: Note[];
-  setNotes: Dispatch<SetStateAction<Note[]>>;
-  setTags: Dispatch<SetStateAction<Tag[]>>;
-  setActive: Dispatch<SetStateAction<number>>;
+  search: string;
+  dispatch: Dispatch<{
+    type: string;
+    payload?: string | number | string[] | Tag | Note;
+  }>;
 }
 const filterTag = createContext<Value>({
   tag: "",
-  setTagDetail: () => "",
   tags: [],
-  setTags: () => [],
-  setActive: () => 1,
-  setNotes: () => [],
   active: 1,
   notes: [],
+  displayId: null,
+  startNote: false,
+  search: "",
+  dispatch: () => {},
 });
 
-function FilterTagContext({ children }: { children: ReactElement }) {
-  const [tag, setTag] = useState<string>("");
-  const [active, setActive] = useState<number>(1);
-  const [tags, setTags] = useState([
-    {
-      title: "All Tags",
-      id: 0,
-    },
-    {
-      title: "Cooking",
-      id: 1,
-    },
-    {
-      title: "Dev",
-      id: 2,
-    },
-    {
-      title: "Fitness",
-      id: 3,
-    },
-    {
-      title: "Health",
-      id: 4,
-    },
-    {
-      title: "Personal",
-      id: 5,
-    },
-    {
-      title: "React",
-      id: 6,
-    },
-    {
-      title: "Recipes",
-      id: 7,
-    },
-    {
-      title: "Shopping",
-      id: 8,
-    },
-    {
-      title: "Travel",
-      id: 9,
-    },
-    {
-      title: "TypeScript",
-      id: 10,
-    },
-  ]);
-  const [notes, setNotes] = useState<Note[]>([]);
+function reducer(
+  state: State,
+  action: { type: string; payload?: string | number | string[] | Note | Tag }
+): State {
+  switch (action.type) {
+    case "search":
+      return { ...state, search: action.payload as string };
+    case "getActive":
+      return { ...state, active: action.payload as number };
+    case "getDisplayNote":
+      return {
+        ...state,
+        displayId: action.payload as number,
+        startNote: false,
+      };
+    case "newTag":
+      return {
+        ...state,
+        tags: [...state.tags, action.payload as Tag],
+      };
+    case "tagDetails":
+      return { ...state, tag: action.payload as string };
+    case "startFalse":
+      return {
+        ...state,
+        startNote: false,
+      };
+    case "startTrue":
+      return {
+        ...state,
+        startNote: true,
+      };
+    case "archiveNote":
+      return {
+        ...state,
+        notes: state.notes.map((note) => {
+          return note.id === state.displayId
+            ? { ...note, archive: true }
+            : { ...note, archive: note.archive };
+        }),
+      };
+    case "unArchiveNote":
+      return {
+        ...state,
+        notes: state.notes.map((note) => {
+          return note.id === state.displayId
+            ? { ...note, archive: false }
+            : { ...note, archive: note.archive };
+        }),
+      };
 
-  function setTagDetail(val: string) {
-    setTag(val);
+    case "deleteNote":
+      return {
+        ...state,
+        startNote: false,
+        notes: state.notes.filter((note) => note.id !== state.displayId),
+      };
+    case "createNote":
+      return {
+        ...state,
+        startNote: false,
+        notes: state.notes.map((note) => {
+          return note.id === state.displayId
+            ? { ...note, date: date(), description: action.payload as string[] }
+            : { ...note, description: [...note.description] };
+        }),
+      };
+    case "createNoteObj":
+      return {
+        ...state,
+        notes: [...state.notes, action.payload as Note],
+      };
+    default:
+      throw new Error("Unknown action type");
   }
+}
+
+function FilterTagContext({ children }: { children: ReactElement }) {
+  const storedNotes = localStorage.getItem("notes");
+  const initialNotes = storedNotes ? JSON.parse(storedNotes) : [];
+  const storedTags = localStorage.getItem("tags");
+  const initialTags = storedTags ? JSON.parse(storedTags) : tagList;
+  const initialState = {
+    tag: "",
+    active: 1,
+    displayId: null,
+    startNote: false,
+    search: "",
+    tags: initialTags,
+    notes: initialNotes,
+  };
+
+  const [{ notes, tag, tags, active, displayId, startNote, search }, dispatch] =
+    useReducer(reducer, initialState);
+  useEffect(() => {
+    localStorage.setItem("notes", JSON.stringify(notes));
+  }, [notes, "notes"]);
+  useEffect(() => {
+    localStorage.setItem("tags", JSON.stringify(tags));
+  }, [tags, "tags"]);
 
   return (
     <filterTag.Provider
       value={{
-        setTagDetail,
+        search,
         tag,
         active,
-        setActive,
-        setNotes,
         notes,
         tags,
-        setTags,
+        dispatch,
+        displayId,
+        startNote,
       }}
     >
       {children}
@@ -118,76 +177,3 @@ function useFilterTag() {
 }
 
 export { FilterTagContext, useFilterTag };
-
-// {
-//   title: "React Performance Optimization",
-//   tags: ["Dev", "React"],
-//   date: "29 Oct 2024",
-//   id: 1,
-//   description: [],
-//   archive: false,
-// },
-// {
-//   title: "Japan Travel Planning",
-//   tags: ["Travel", "Personal"],
-//   date: "28 Oct 2024",
-//   description: [],
-//   id: 2,
-//   archive: false,
-// },
-// {
-//   title: "Favourite Pasta Recipes",
-//   tags: ["Cooking", "Recipes"],
-//   date: "27 Oct 2024",
-//   description: [],
-//   id: 3,
-//   archive: false,
-// },
-// {
-//   title: "Weekly Workout Plan",
-//   tags: ["Dev", "React"],
-//   date: "26 Oct 2024",
-//   description: [],
-//   id: 4,
-//   archive: false,
-// },
-// {
-//   title: "Meal Prep Ideas",
-//   tags: ["Cooking", "Health", "Recipes"],
-//   date: "25 Oct 2024",
-//   description: [],
-//   id: 5,
-//   archive: false,
-// },
-// {
-//   title: "Reading List",
-//   tags: ["Personal", "Dev"],
-//   date: "24 Oct 2024",
-//   description: [],
-//   id: 6,
-//   archive: false,
-// },
-// {
-//   title: "Fitness Goals 2025",
-//   tags: ["Fitness", "Health", "Personal"],
-//   date: "23 Oct 2024",
-//   id: 7,
-//   description: [],
-//   archive: false,
-// },
-// {
-//   title: "Learning",
-//   tags: ["TypeScript", "React", "Personal"],
-//   date: "24 Oct 2024",
-//   id: 8,
-//   description: [],
-//   archive: true,
-// },
-// {
-//   title: "Marketing",
-//   tags: ["Recipes", "Shopping", "Personal"],
-//   date: "25 Oct 2024",
-//   id: 9,
-//   description: [],
-//   archive: true,
-// },
