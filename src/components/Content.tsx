@@ -1,4 +1,3 @@
-import React from "react";
 import NoteList from "./NoteList";
 import Buttons from "./Buttons";
 import NoteContent from "./NoteContent";
