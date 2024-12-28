@@ -33,11 +33,11 @@ export default function ArchiveScreen() {
       ) : (
         ""
       )}
-      <div className="px-5 h-full ">
+      <div className="px-5 h-full">
         {displayNote.length ? (
           displayNote.map((note) => <DisplayNote note={note} key={note.id} />)
         ) : (
-          <div className="flex flex-col text-current-2 items-center h-full justify-center">
+          <div className="flex flex-col text-current-2 items-center h-[83vh] justify-center">
             <div className="text-3xl bg-active rounded-full p-3">
               <TbArchiveOff />
             </div>
