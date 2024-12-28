@@ -152,8 +152,8 @@ function reducer(
     case "createNoteObj":
       return {
         ...state,
+        displayId: state.notes.length * 2,
         status: "show",
-        // displayId: state.notes.length * 2,
         notes: [...state.notes, action.payload as Note],
       };
     default:

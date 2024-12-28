@@ -43,7 +43,7 @@ export function CreateNote({
         payload: {
           title: val,
           tags: selectedTag,
-          id: notes.length + 1,
+          id: notes.length * 2,
           date: date(),
           description: [],
           archive: false,

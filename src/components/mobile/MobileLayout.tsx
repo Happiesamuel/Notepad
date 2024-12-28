@@ -22,13 +22,15 @@ export default function MobileLayout() {
         {status === "archive" && <ArchiveScreen />}
         {status === "tags" && <TagScreen />}
         {status === "show" && <ShowNoteScreen />}
-        <div className="absolute bottom-[13%] w-full flex justify-end px-4">
+        <div className="fixed bottom-[13%] w-full flex justify-end px-4">
           <CreateNote isOpen={isOpen} setIsOpen={setIsOpen}>
-            <div
-              onClick={() => setIsOpen(true)}
-              className="bg-blue-700 text-zinc-200 w-max text-3xl p-2 px-4 cursor-pointer pb-3  rounded-full"
-            >
-              +
+            <div>
+              <p
+                onClick={() => setIsOpen(true)}
+                className=" text-zinc-200  text-3xl  cursor-pointer p-2 px-4  rounded-full bg-blue-700"
+              >
+                +
+              </p>
             </div>
           </CreateNote>
         </div>

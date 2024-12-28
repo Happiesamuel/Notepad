@@ -18,19 +18,21 @@ export default function ArchiveScreen() {
   }
   return (
     <div className="h-full">
-      <div className="flex justify-between items-center px-5 my-3">
-        <h1 className="text-xl font-semibold text-current-1 ">Archive notes</h1>
-        {displayNote.length ? (
+      {displayNote.length ? (
+        <div className="flex justify-between items-center px-5 my-3">
+          <h1 className="text-xl font-semibold text-current-1 ">
+            Archive notes
+          </h1>
           <Button
             onClick={() => handleClick()}
             className="bg-blue-600 text-zinc-100 hover:bg-blue-700"
           >
             Unarchive all Notes
           </Button>
-        ) : (
-          ""
-        )}
-      </div>
+        </div>
+      ) : (
+        ""
+      )}
       <div className="px-5 h-full ">
         {displayNote.length ? (
           displayNote.map((note) => <DisplayNote note={note} key={note.id} />)
