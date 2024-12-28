@@ -42,7 +42,7 @@ export default function MobileNav() {
     },
   ];
   return (
-    <div className=" flex fixed w-full bottom-[2%] items-center  px-10 border-t border-divide">
+    <div className=" flex fixed w-full bottom-[2%] bg-background z-50 items-center  px-10 border-t border-divide">
       {links.map((link) => (
         <div
           key={link.id}

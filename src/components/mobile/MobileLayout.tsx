@@ -16,7 +16,7 @@ export default function MobileLayout() {
   return (
     <div className="lg:hidden relative min-h-screen">
       <MobileHeader />
-      <div className="overflow-scroll no-scrollbar h-[78vh]">
+      <div className="overflow-scroll no-scrollbar h-full">
         {status === "home" && <HomeScreen />}
         {status === "search" && <SearchScreen />}
         {status === "archive" && <ArchiveScreen />}

@@ -62,7 +62,7 @@ export default function ShowNoteScreen() {
 
   if (!findNote) return;
   return (
-    <div className="pt-3 px-4 ">
+    <div className="pt-3 px-4">
       <div className="flex items-center justify-between gap-3 border-b border-divide py-3 mb-2">
         <div
           onClick={() => dispatch({ type: "backShow" })}
