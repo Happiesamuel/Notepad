@@ -139,6 +139,15 @@ function reducer(
         status: "home",
         notes: state.notes.filter((note) => note.id !== state.displayId),
       };
+    case "updateTitle":
+      return {
+        ...state,
+        notes: state.notes.map((note) => {
+          return note.id === state.displayId
+            ? { ...note, title: action.payload as string }
+            : { ...note, title: note.title };
+        }),
+      };
     case "createNote":
       return {
         ...state,

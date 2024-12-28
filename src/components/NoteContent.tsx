@@ -3,6 +3,8 @@ import { GoClock, GoTag } from "react-icons/go";
 import { Button } from "./ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
+import { RiEdit2Line } from "react-icons/ri";
+import { Input } from "./ui/input";
 
 export default function NoteContent() {
   const { notes, displayId, startNote, dispatch } = useFilterTag();
@@ -10,6 +12,19 @@ export default function NoteContent() {
   const [val, setVal] = useState<string>(
     findNote?.description.length ? findNote?.description.join("\n") : ""
   );
+  const [value, setValue] = useState(findNote?.title);
+  const [edit, setEdit] = useState(false);
+  const input = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (input.current) {
+      input.current.focus();
+    }
+    return () => {
+      if (input.current) {
+        input.current.onfocus = null;
+      }
+    };
+  }, [edit]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(
     function () {
@@ -40,12 +55,40 @@ export default function NoteContent() {
     const newVal: string[] = val.split("\n");
     dispatch({ type: "createNote", payload: [...newVal] });
   }
+  function handleEdit() {
+    if (!value) return;
+    dispatch({ type: "updateTitle", payload: value });
+    setEdit(false);
+  }
   if (!findNote) return;
   return (
     <div className="pt-3 px-4 relative">
-      <h1 className="font-semibold text-2xl text-current-1">
-        {findNote?.title}
-      </h1>
+      {!edit ? (
+        <h1 className="font-semibold text-2xl text-current-1 flex items-end gap-2">
+          {findNote?.title}{" "}
+          <RiEdit2Line
+            onClick={() => setEdit(true)}
+            className="text-blue-600 text-base cursor-pointer"
+          />
+        </h1>
+      ) : (
+        <div className="flex gap-2 items-center">
+          <Input
+            ref={input}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            id="title"
+            placeholder="Enter your note title..."
+            className=" border-none text-current-2 w-[65%] font-semibold"
+          />
+          <Button
+            onClick={() => handleEdit()}
+            className="bg-blue-600 hover:bg-blue-700 text-zinc-100"
+          >
+            Save
+          </Button>
+        </div>
+      )}
       <div className="mt-4 flex flex-col gap-2 border-b border-divide pb-3">
         <div className=" text-current-2 grid grid-cols-[0.4fr_1fr] items-center  ">
           <div className="flex items-center gap-2  text-sm">
